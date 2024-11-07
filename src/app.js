@@ -3,12 +3,16 @@ const app = express();
 app.use("/test",(req, res)=>{
     res.send("Hello server")
 })
-app.use("/dashboard",(req, res)=>{
-    res.send("dashboard ")
+app.get("/user",(req, res)=>{
+    res.send({firstName : "Lucky", lastName :  "Singh"})
 })
-app.use("/",(req, res)=>{
-    res.send("Hello lucky ")
+app.post("/user", (req, res)=>{
+    res.send("data saved to the database")
 })
+app.delete("/user", (req,res)=>{
+    res.send("deleted")
+})
+
 app.listen(3000, ()=>{
 console.log("server is started on port:3000")
 });

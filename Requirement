@@ -1,0 +1,22 @@
+Dev tinder
+product requirement:-
+1. create and account
+2.Login
+3. update your profile
+4.feed page profile
+5.send connection request
+6. see the matches
+7.see the request we have send 
+8.update your profiled
+
+API will we need:-
+POST /signup
+POST /login
+GET /profile -get api
+POST /profile -post data on api
+PATCH /profile- update api
+DELETE /profile -delete api data 
+POST /sendRequest--interseted||ignore reguest
+POST /reviewRequest --- Accept||Reject 
+GET/ request
+GET/connection

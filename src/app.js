@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
-app.use(
+const{middlewareUserAuth}=require("./middleware/auth")
+app.use("/user",middlewareUserAuth)
+app.get(
   "/user",
   (req, res, next) => {
     res.send("Rounte Handle 1");

@@ -24,13 +24,46 @@ console.log("server is started on port:3000")
 });
 ----------------------------------------------------------------
 middleWare& Error handling:-
-1.we have to send respose res.send() back or else req will be hanging 
+1.Middleware->functions or call back function which is inside methods like get("/",(req,res,next)=>{},(req,res,next)=>{},(req,
+res)=>{}) is called middleware. Whenever you make api call it goes through middleware chains to get the response.
+
+ Q.what is the use of middleware?
+Ans.=> if we have multiple api calls like for get user delete user
+app.use("/user",(req, res, next)=>{
+const token = "xyz";
+const isUSerAuthenticated = token==="xyz";
+
+if(!isUSerAuthenticated){
+    res.status(401).send("user is not authorized")
+}
+else{
+    next();
+}
+})
+app.get(
+  "/user",
+  (req, res, next) => {
+    res.send("Rounte Handle 1");
+    next();
+  },
+  (req, res) => {
+    res.send("Rounte Handle 2");
+  }
+);
+
+app.listen(3000, () => {
+  console.log("server is started on port:3000");
+});
+
+
+
+2.we have to send respose res.send() back or else req will be hanging 
 to handle this problem we can use next();
 next()=> {
 next direclty jump to next call back fuction skipping anythingw wrriten after next so order matter
 if there is not call back or routehandler after next it will break and show the error 
 } 
-app.use(
+app.get(
   "/user",
   (req, res, next) => {
     // res.send("Rounte Handle 1");// this is commenting that why res will be sent from next Handle 2 using next() if this is not commented header will not set because tcp connection is made on first call and after res connection is lost

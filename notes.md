@@ -73,3 +73,5 @@ app.get(
     res.send("Rounte Handle 2");
   }
 );
+
+Scheme=> what all things you r going to store into collection is called scheme

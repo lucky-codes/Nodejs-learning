@@ -4,7 +4,7 @@ const userScheme =  new mongoose.Schema({
     firstName : {
         type : String,
         required: true,
-        minLength : 4,
+        minLength : 3,
         maxLength: 50,
         lowercase:true
 
@@ -43,7 +43,8 @@ const userScheme =  new mongoose.Schema({
         }
     },
     photoUrl : {
-        type : String
+        type : String,
+        default: "https://e1.pxfuel.com/desktop-wallpaper/53/877/desktop-wallpaper-whatsapp-dp-whatsapp-dp-cute-whatsapp-dp.jpg"
     },
     about : {
         type: String

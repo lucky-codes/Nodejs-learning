@@ -14,6 +14,12 @@ const validateSignUpData = (req) =>{
         throw new Error (" Password is not strong enough")
     }
 }
+const validateEditProfile = (req) =>{
+    const validateUser = ["firstName","lastName","age","photoUrl","about","skills", "gender"]
+    const isUserAllowed = Object.keys(req.body).every(data => validateUser.includes(data))
+    return isUserAllowed
+}
+
 module.exports = {
-    validateSignUpData
+    validateSignUpData, validateEditProfile
 }

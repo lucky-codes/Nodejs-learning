@@ -75,3 +75,10 @@ app.get(
 );
 
 Scheme=> what all things you r going to store into collection is called scheme
+
+JWT-Token
+jwt.sign({mention the data you want to hide into token},"mention your secret key")
+jwt.verify(pass the token, "pass the secret key")
+In Express there is a fuction called cookies you can use it to create cookies
+res.cookie() will create cookie
+req.cookies will retrieve cookies from the server

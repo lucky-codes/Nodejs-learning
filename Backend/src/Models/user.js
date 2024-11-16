@@ -30,18 +30,26 @@ const userScheme = new mongoose.Schema(
       type: String,
       required: true,
     },
-    age: {
-      type: Number,
-      min: 18,
+    birthDate: {
+      type: Date,
     },
     gender: {
       type: String,
       validate(value) {
-        if (!["male", "female", "others"].includes(value)) {
+        if (!["Male", "Female", "others"].includes(value)) {
           throw new Error("Gender Field is not valid");
         }
       },
     },
+    interestedIn: {
+       type: String,
+      validate(value){
+        if(!['Frontend','Backend',"FullStack"].includes(value)){
+          throw new Error("interenstedIn field is not valid")
+          }
+      }
+    },
+
     photoUrl: {
       type: String,
       default:

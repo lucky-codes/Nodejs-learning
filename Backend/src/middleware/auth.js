@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const Usermodel = require("../Models/user")
+
 const userAuth= async(req, res, next)=>{
 //read the token from the request cookies 
 try{
@@ -7,7 +8,7 @@ const {token} = req.cookies
 if(!token){
     throw new Error("Token is not valid!.....")
 }
-const secret = "SECRETTOKEN@1823u1297&"
+const secret = process.env.SECRET_KEY
 //validate the token 
 const decodeObj = jwt.verify(token,secret)
 //find the user

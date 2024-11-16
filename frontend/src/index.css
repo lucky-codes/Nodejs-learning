@@ -1,0 +1,13 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media only screen and (max-width:1536px){
+    .photo{
+        top: 35%
+    }
+    .signup{
+        margin: 50px 0px 0px 300px;
+    }
+} 

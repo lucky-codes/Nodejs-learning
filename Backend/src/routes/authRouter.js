@@ -10,31 +10,33 @@ authRouter.post("/signup", async (req, res) => {
     const {
       firstName,
       lastName,
-      age,
+      birthDate,
       email,
       password,
       about,
       skills,
       gender,
       photoUrl,
+      interestedIn
     } = req.body;
     validateSignUpData(req);
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser = new userModel({
       firstName,
       lastName,
-      age,
+      birthDate,
       email,
       password: passwordHash,
       about,
       skills,
       gender,
       photoUrl,
+      interestedIn
     });
     await newUser.save();
     res.send("User added successfully");
   } catch (error) {
-    res.status(400).send("Error: " + error.message);
+    res.status(500).send("Error: " + error.message);
   }
 });
 authRouter.post("/login", async (req, res) => {

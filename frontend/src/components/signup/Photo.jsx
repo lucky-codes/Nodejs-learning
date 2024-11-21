@@ -2,7 +2,7 @@ import React from "react";
 import { FaUpload } from "react-icons/fa6";
 const Photo = ({ data, onHandleUpload }) => {
   return (
-    <div className="photo w-[300px] h-[300px] bg-white/50 absolute top-[20%] right-[10%] border-dotted border-2 border-green-900">
+    <div className=" w-[300px] h-[300px] border-dotted border-2 border-green-900">
       <img
         src={
           data ||
@@ -19,10 +19,12 @@ const Photo = ({ data, onHandleUpload }) => {
         id="file-upload"
         onChange={onHandleUpload}
       />
-      <label htmlFor="file-upload" className="flex justify-center">
-      <button className='flex gap-2'><FaUpload className=" text-xl mt-1 text-green-300"/>Upload</button>
-      </label>
-      
+      <div className="flex justify-center">
+        <label htmlFor="file-upload" className="flex gap-3 w-20 cursor-pointer">
+          <FaUpload className=" text-xl mt-1 text-green-300" />
+          <span>Upload</span>
+        </label>
+      </div>
     </div>
   );
 };

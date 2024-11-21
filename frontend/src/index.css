@@ -11,3 +11,6 @@
         margin: 50px 0px 0px 300px;
     }
 } 
+* {
+    box-sizing: border-box;
+  }

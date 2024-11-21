@@ -13,11 +13,12 @@ const userScheme = new mongoose.Schema(
     },
     lastName: {
       type: String,
+      lowercase: true,
+
     },
     email: {
       type: String,
       required: true,
-      lowercase: true,
       unique: true,
       trim: true,
       validate(value) {
@@ -42,12 +43,12 @@ const userScheme = new mongoose.Schema(
       },
     },
     interestedIn: {
-       type: String,
-      validate(value){
-        if(!['Frontend','Backend',"FullStack"].includes(value)){
-          throw new Error("interenstedIn field is not valid")
-          }
-      }
+      type: String,
+      validate(value) {
+        if (!["Frontend", "Backend", "Fullstack"].includes(value)) {
+          throw new Error("interenstedIn field is not valid");
+        }
+      },
     },
 
     photoUrl: {
@@ -61,19 +62,35 @@ const userScheme = new mongoose.Schema(
     skills: {
       type: [String],
     },
+    looking: {
+      type:String,
+      validate(value) {
+        if (
+          ![
+            `\u{1F498}Long-term partner`,
+            `\u{1F60D}Long-term open to short`,
+            `\u{1F49E} Short-term open to long`,
+            `\u{1F90C} Short-term fun`,
+            `\u{1F450} New freinds`,
+            `\u{1F914}still figuring it out`,
+          ].includes(value)
+        ) {
+          throw new Error ("looking field is filled incorectly")
+        }
+      },
+    },
   },
   { timestamps: true }
 );
 userScheme.methods.getJWT = async function () {
   const user = this;
-  const secret = "SECRETTOKEN@1823u1297&";
+  const secret = process.env.SECRET_KEY;
   const token = await jwt.sign({ _id: user._id }, secret, {
     expiresIn: "1d",
   });
   return token;
 };
 userScheme.methods.validatePassword = async function (passwordInputByUser) {
-  const user = this;
   const passwordHash = this.password;
   const verifyUSer = await bcrypt.compare(passwordInputByUser, passwordHash);
   return verifyUSer;

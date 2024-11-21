@@ -1,10 +1,10 @@
 const express = require("express");
-const { userAuth } = require("../middleware/auth");
+const { authMiddleware } = require("../middleware/auth");
 const ConnectionSchemeModel = require("../Models/connectionRequestModel");
 const user = require("../Models/user");
 const userRouter = express.Router();
-const SAFE_DATA = "firstName lastName age gender skills about photoUrl";
-userRouter.get("/user/request/received", userAuth, async (req, res) => {
+const SAFE_DATA = "firstName lastName age gender interestedIn birthDate skills about photoUrl";
+userRouter.get("/user/request/received", authMiddleware, async (req, res) => {
   try {
     const loggedIn = req.user;
     const connectionRequest = await ConnectionSchemeModel.find({
@@ -17,7 +17,7 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
     res.status(400).send("Error:" + error.message);
   }
 });
-userRouter.get("/user/connection", userAuth, async (req, res) => {
+userRouter.get("/user/connection", authMiddleware, async (req, res) => {
   try {
     const user = req.user;
     const allConnections = await ConnectionSchemeModel.find({
@@ -63,7 +63,7 @@ userRouter.get("/user/connection", userAuth, async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-userRouter.get("/feed", userAuth, async (req, res) => {
+userRouter.get("/feed", authMiddleware, async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit) || 10;
   limit=limit > 50 ? 50 : limit;
@@ -89,6 +89,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       .select(SAFE_DATA)
       .skip(skip)
       .limit(limit);
+      console.log(dataFeed)
     res.send({ Data: dataFeed });
   } catch (error) {
     res.status(500).send({ message: error.message });

@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Photo from "./Photo";
+import { validateData } from "../../utils/validation";
+import { signupApi } from "../../utils/apiHandler";
+import Interestedin from "./Interestedin";
+import Head from "./Head";
 const Signup = () => {
   const [data, setData] = useState({
     firstName: "",
@@ -8,61 +12,25 @@ const Signup = () => {
     email: "",
     password: "",
     birthDate: {
-      month: "",
-      day: "",
-      year: "",
+      month: "March",
+      day: "1",
+      year: "2000",
     },
     photoUrl: "",
-    about: "",
     skills: [],
     gender: undefined,
+    interestedIn: null,
+    looking: "",
+    about: "",
   });
+  const [content, setContent] = useState("");
+  const [lookingFor, setLookingFor] = useState(false);
   const [error, setError] = useState(null);
-  // const signupApi = async()=>{
-  //  try {
-  //   const requestData = {
-  //     ...data,
-  //     birthDate: `${data.birthDate.year}-${data.birthDate.month}-${data.birthDate.day}`,
-  //   };
-  //   const response =await fetch("http://localhost:7777/signup",{
-  //     method: 'POST',
-  //     headers:{
-  //       "Content-Type" : "application/json"
-  //     },
-  //     body:JSON.stringify(requestData)
-
-  //   })
-  //   console.log(JSON.stringify(requestData));
-  //   const result = await response.json()
-  //   if(!response.ok){
-  //      throw new Error(result.message||'Invalid Entry')
-  //   }
-  //   console.log({data:result})
-  //  } catch (error) {
-  //    console.log(error.message)
-  //  }
-
-  // }
-  const signupApi = async () => {
-    const { month, day, year } = data.birthDate;
-    try {
-      const requestData = {
-        ...data,
-        birthDate:
-          month && day && year ? new Date(`${year}-${month}-${day}`) : null,
-      };
-      console.log("Data send", data);
-      const response = await axios.post(
-        "http://localhost:7777/signup",
-        requestData
-      );
-      if (response.status != 200) {
-        throw new Error(response.data.message || "invalid Entry");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [active, setActive] = useState({
+    gender: null,
+    interestedIn: null,
+    submit: null,
+  });
   const onClickHandle = (e) => {
     const { value, name } = e.target;
 
@@ -75,10 +43,12 @@ const Signup = () => {
       setData((prev) => ({ ...prev, [name]: value }));
     }
   };
+
   const onClickSetHandle = (field, value) => {
     setData((prev) => ({ ...prev, [field]: value }));
-    console.log(data);
+    setActive((prev) => ({ ...prev, [field]: value }));
   };
+
   const onHandleUpload = (e) => {
     const file = e.target.files[0]; // Get the selected file
     if (file) {
@@ -89,42 +59,34 @@ const Signup = () => {
       reader.readAsDataURL(file); // Start reading the file as a Data URL
     }
   };
-  const validateData = function () {
-    const validate = {};
-    if (!data.firstName.trim()) {
-      validate.firstName = "firstName is mandetory Field";
-    }
-    if (!data.email.trim()) {
-      validate.email = "email is mandetory Field";
-    }
-    if (!data.password.trim()) {
-      validate.password = "Password is a mandetory Field";
-    }
-    console.log(Object.keys(validate).length);
 
-    if (Object.keys(validate).length >= 0) {
-      setError(validate);
-    }
+  const handleShowInterest = () => {
+    setLookingFor(true);
   };
-  React.useEffect(() => {
-    validateData();
-  }, [data]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(error);
 
+  React.useEffect(() => {
+    validateData(data, setError);
+  }, [data]);
+
+  const handleSubmit = (e, key, value) => {
+    e.preventDefault();
+    console.log("error", error);
+    console.log("Data", data);
+    setActive((prev) => ({ ...prev, [key]: value }));
     if (error && Object.keys(error).length > 0) {
       alert("Fill all mandetory Field First");
     } else {
-      signupApi();
+      signupApi({ data, axios });
     }
   };
+
   return (
-    <div className=" w-full flex-1 bg-black">
+    <div className=" w-full relative flex-1 bg-black/90">
+      <Head/>
       <form
         action=""
         onSubmit={(e) => e.preventDefault()}
-        className="signup text-white/80 flex flex-col gap-2 m-20 mt-4 mx-[500px]"
+        className=" signup text-white/80 flex flex-col gap-2 m-20 mt-4 mx-[500px]"
       >
         <h1 className="text-white mx-[180px]  font-semibold text-4xl">
           Create account
@@ -137,6 +99,7 @@ const Signup = () => {
           value={data.firstName}
           name="firstName"
           onChange={onClickHandle}
+          placeholder="Enter your FirstName"
           className="w-[600px] h-10 rounded-md text-white/80 border-[1px] p-5 bg-black"
         />
         {error && <span className="text-red-800">{error.firstName}</span>}
@@ -147,6 +110,7 @@ const Signup = () => {
           type="text"
           value={data.lastName}
           name="lastName"
+          placeholder="Enter your lastName"
           onChange={onClickHandle}
           className="w-[600px] h-10 rounded-md text-white/80 border-[1px] p-5 bg-black"
         />
@@ -158,6 +122,7 @@ const Signup = () => {
           value={data.email}
           name="email"
           onChange={onClickHandle}
+          placeholder="Enter your Email Address"
           className="w-[600px] h-10 rounded-md text-white/80 border-[1px] p-5 bg-black"
         />
         {error && <span className="text-red-800">{error.email}</span>}
@@ -169,6 +134,7 @@ const Signup = () => {
           value={data.password}
           name="password"
           onChange={onClickHandle}
+          placeholder="Enter your Password"
           className="w-[600px] h-10 rounded-md text-white/80 border-[1px] p-5 bg-black"
         />
         {error && <span className="text-red-800">{error.password}</span>}
@@ -176,13 +142,14 @@ const Signup = () => {
         <div className="flex gap-3">
           <div className="flex flex-col">
             <label htmlFor="">Month</label>
+            
             <select
-              type="text"
               value={data.birthDate.month}
               name="month"
               onChange={onClickHandle}
-              className="w-auto h-10 rounded-lg text-white/80 border-2 p-5 bg-black"
+              className="w-auto h-10 rounded-lg px-4  text-white bg-black"
             >
+              <p className="text-yellow-400">{data.birthDate.month}</p>
               <option value="" className="">
                 Select Month
               </option>
@@ -203,11 +170,11 @@ const Signup = () => {
           <div className="flex flex-col text-white">
             <label htmlFor="">Day</label>
             <select
-              type="text"
+              type="select"
               value={data.birthDate.day}
               name="day"
               onChange={onClickHandle}
-              className="w-20 h-10 rounded-lg text-white/80 border-2 p-5 bg-black"
+              className="w-auto h-10 rounded-lg text-white px-4  bg-black"
             >
               {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => (
                 <option className="text-white" value={day} key={day}>
@@ -221,11 +188,11 @@ const Signup = () => {
               Year
             </label>
             <select
-              type="text"
+              type="select"
               value={data.birthDate.year}
               name="year"
               onChange={onClickHandle}
-              className="w-20 h-10 rounded-lg text-white/80 border-2 p-5 bg-black"
+              className="w-auto h-10 rounded-lg px-4 text-white  bg-black"
             >
               {Array.from({ length: 100 }, (_, i) => (
                 <option
@@ -240,62 +207,112 @@ const Signup = () => {
           </div>
         </div>
         <p className="font-bold">Gender</p>
-        <div className="flex gap-5">
+        <div className="flex gap-5 items-start">
           <button
             name="gender"
-            className="border-2 px-16 py-2 rounded-xl"
-            onClick={() => onClickSetHandle("gender","Man")}
+            className={`border-2 ${
+              active?.gender == "Male" ? "border-yellow-600" : ""
+            } px-16 hover:w-[250px] hover:h-[48px] transition-all duration-300 ease-in-out active:bg-green-700 py-2 bg-black rounded-xl`}
+            onClick={() => onClickSetHandle("gender", "Male")}
           >
             Male
           </button>
           <button
             name="gender"
-            className="border-2 px-16 py-2 rounded-xl"
-            onClick={() => onClickSetHandle("gender","Female")}
+            className={`border-2 ${
+              active?.gender == "Female" ? "border-yellow-600" : ""
+            } px-16 hover:w-[250px] hover:h-[48px] transition-all duration-300 ease-in-out active:bg-green-700 py-2 bg-black rounded-xl`}
+            onClick={() => onClickSetHandle("gender", "Female")}
           >
             Female
           </button>
           <button
             name="gender"
-            className="border-2 px-16 py-2 rounded-xl"
-            onClick={() => onClickSetHandle("gender","Others")}
+            className={`border-2 ${
+              active?.gender == "Others" ? "border-yellow-600" : ""
+            } px-16 hover:w-[250px] hover:h-[48px] transition-all duration-300 ease-in-out active:bg-green-700 py-2 bg-black rounded-xl`}
+            onClick={() => onClickSetHandle("gender", "Others")}
           >
             Others
           </button>
         </div>
         <label htmlFor="">Show my gender on profile</label>
         <p className="font-bold">Interested in</p>
-        <div className="flex gap-5">
+        <div className="btn flex gap-5 items-start">
           <button
-            className="border-2 px-16 py-2 rounded-xl"
-            onClick={() => onClickSetHandle("intersetedIn","Frontend")}
+            className={`border-2 ${
+              active?.interestedIn == "Frontend" ? "border-yellow-600" : ""
+            } px-16 hover:w-[250px] hover:h-[48px] transition-all duration-300 ease-in-out active:bg-green-700 py-2 bg-black rounded-xl`}
+            onClick={() => onClickSetHandle("interestedIn", "Frontend")}
           >
             Frontend
           </button>
           <button
-            className="border-2 px-16 py-2 rounded-xl"
-            onClick={() => onClickSetHandle("intersetedIn","Backend")}
+            className={`border-2 ${
+              active?.interestedIn == "Backend" ? "border-yellow-600" : ""
+            } px-16 hover:w-[250px] hover:h-[48px] transition-all duration-300 ease-in-out active:bg-green-700 py-2 bg-black rounded-xl`}
+            onClick={() => onClickSetHandle("interestedIn", "Backend")}
           >
             Backend
           </button>
           <button
-            className="border-2 px-16 py-2 rounded-xl"
-            onClick={() => onClickSetHandle("intersetedIn","Fullstack")}
+            className={`border-2 ${
+              active?.interestedIn == "Fullstack" ? "border-yellow-600" : ""
+            } px-16 hover:w-[250px] hover:h-[48px] transition-all duration-300 ease-in-out active:bg-green-700 py-2 bg-black rounded-xl`}
+            onClick={() => onClickSetHandle("interestedIn", "Fullstack")}
           >
             Fullstack
           </button>
         </div>
         <p className="font-bold">Looking for</p>
-        <div></div>
+        <button
+          className={`${
+            lookingFor && "border-yellow-600"
+          } bg-black rounded-full btn3 w-[250px] h-[40px] border`}
+          onClick={handleShowInterest}
+        >
+          Edit partner for coding intent
+        </button>
+        <div>
+          {lookingFor && (
+            <Interestedin
+              setContent={setContent}
+              setLookingFor={setLookingFor}
+              lookingFor={lookingFor}
+              setData={setData}
+            />
+          )}
+          {content && (
+            <p className="w-auto max-w-[300px] h-[30px] bg-black rounded-full text-center text-yellow-500/80">
+              {content}
+            </p>
+          )}
+        </div>
+        <div className="w-full">
+          <p className="font-bold">About</p>
+          <textarea 
+          className="w-1/2 min-h-20 break-all rounded-md overflow-hidden text-white/80 border-[1px] p-2 bg-black"
+          placeholder="Write something about youreself" 
+          value={data.about}
+          name="about"
+          onChange={onClickHandle}
+           />
+        </div>
+
         <div>
           <button
-            className="border-2 px-16 bg-green-800 text-white py-2 rounded-xl"
-            onClick={handleSubmit}
+            className={`${
+              error ? "border-red-600" : "border-green-600"
+            } border-2 px-16 bg-green-800 text-white py-2 rounded-xl`}
+            onClick={(e) => handleSubmit(e, "submit", "true")}
           >
             Create Account
           </button>
+        
         </div>
+        <div className="fixed inset-y-0 right-60 top-36">
         <Photo data={data.photoUrl} onHandleUpload={onHandleUpload} />
+        </div>
       </form>
     </div>
   );

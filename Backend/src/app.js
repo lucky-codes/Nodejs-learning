@@ -8,7 +8,7 @@ const app = express();
 require('dotenv').config()
 app.use(cors({
   origin: 'http://localhost:5173',
-  allowedHeaders:'Content-Type'
+  allowedHeaders:['Content-Type', 'Authorization']
 }))
 // creating the instance of User model
 const authRouter = require('./routes/authRouter.js')
@@ -24,7 +24,7 @@ app.use('/', userRequestRoute)
 connectDB()
   .then(() => {
     app.listen(process.env.PORT, (req, res) => {
-      console.log("Connection is Established at port:3000......");
+      console.log("Connection is Established......");
     });
     console.log("Database Connections has been Establized....");
   })

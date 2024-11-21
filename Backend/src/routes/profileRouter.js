@@ -1,16 +1,20 @@
 const express = require("express");
 const profileouter = express.Router();
-const { userAuth } = require("../middleware/auth.js");
+const { authMiddleware } = require("../middleware/auth.js");
 const { validateEditProfile } = require("../utils/validation.js");
-profileouter.get("/profile/view", userAuth, async (req, res) => {
+
+profileouter.get("/profile/view", authMiddleware, async (req, res) => {
   try {
     const user = req.user;
+    if(!user){
+      throw new Error("User is not set")
+    }
     res.send(user);
   } catch (error) {
     res.status(500).send("Error: " + error.message);
   }
 });
-profileouter.patch("/profile/edit",userAuth, async (req, res) => {
+profileouter.patch("/profile/edit", authMiddleware, async (req, res) => {
   try {
     if (!validateEditProfile(req)) {
       throw new Error("Invalid Edit");
@@ -22,8 +26,7 @@ profileouter.patch("/profile/edit",userAuth, async (req, res) => {
       message: "Data Edit succesfully",
       data: loggedInUser,
     });
-  } 
-  catch (error) {
+  } catch (error) {
     res.status(500).send("Error:" + error.message);
   }
 });
